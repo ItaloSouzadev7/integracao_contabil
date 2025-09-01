@@ -1,473 +1,354 @@
-// Slide Navigation Functionality
-let currentSlide = 1;
-const totalSlides = 6;
-
-// Initialize the presentation
-document.addEventListener('DOMContentLoaded', function() {
-    updateSlideVisibility();
-    updateNavigationState();
-    initializeFromURL();
-    
-    // Add keyboard navigation
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowRight' || event.key === ' ') {
-            event.preventDefault();
-            nextSlide();
-        } else if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            previousSlide();
-        } else if (event.key >= '1' && event.key <= '6') {
-            event.preventDefault();
-            goToSlide(parseInt(event.key));
-        } else if (event.key === 'Escape') {
-            event.preventDefault();
-            exitFullscreen();
-        }
-    });
-    
-    // Add ARIA labels and roles for accessibility
-    setupAccessibility();
-});
-
-// Navigation functions
-function nextSlide() {
-    if (currentSlide < totalSlides) {
-        currentSlide++;
-        updateSlideVisibility();
-        updateNavigationState();
-        updateURL();
-        announceSlideChange();
-    }
-}
-
-function previousSlide() {
-    if (currentSlide > 1) {
-        currentSlide--;
-        updateSlideVisibility();
-        updateNavigationState();
-        updateURL();
-        announceSlideChange();
-    }
-}
-
-function goToSlide(slideNumber) {
-    if (slideNumber >= 1 && slideNumber <= totalSlides) {
-        currentSlide = slideNumber;
-        updateSlideVisibility();
-        updateNavigationState();
-        updateURL();
-        announceSlideChange();
-    }
-}
-
-// Update slide visibility with smooth transitions
-function updateSlideVisibility() {
-    const slides = document.querySelectorAll('.slide');
-    
-    slides.forEach((slide, index) => {
-        const slideNumber = index + 1;
+class PresentationController {
+    constructor() {
+        this.currentSlide = 1;
+        this.totalSlides = 7;
+        this.slidesWrapper = document.getElementById('slidesWrapper');
+        this.prevBtn = document.getElementById('prevBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.slideIndicators = document.getElementById('slideIndicators');
         
-        // Remove all classes first
-        slide.classList.remove('active', 'prev', 'next');
-        
-        if (slideNumber === currentSlide) {
-            // Current slide
-            slide.classList.add('active');
-        } else if (slideNumber < currentSlide) {
-            // Previous slides
-            slide.classList.add('prev');
-        } else {
-            // Next slides (default state)
-            // No additional class needed, default transform handles this
+        this.init();
+    }
+
+    init() {
+        this.createIndicators();
+        this.bindEvents();
+        this.updateSlide();
+        this.updateNavButtons();
+    }
+
+    createIndicators() {
+        for (let i = 1; i <= this.totalSlides; i++) {
+            const indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            if (i === 1) indicator.classList.add('active');
+            indicator.addEventListener('click', () => this.goToSlide(i));
+            this.slideIndicators.appendChild(indicator);
         }
-    });
-    
-    // Reset scroll position for slide 4 when entering
-    if (currentSlide === 4) {
-        setTimeout(() => {
-            const scrollableContent = document.querySelector('.scrollable-content');
-            if (scrollableContent) {
-                scrollableContent.scrollTop = 0;
+    }
+
+    bindEvents() {
+        // Navigation buttons
+        this.prevBtn.addEventListener('click', () => this.previousSlide());
+        this.nextBtn.addEventListener('click', () => this.nextSlide());
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    this.previousSlide();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    this.nextSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.goToSlide(1);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.goToSlide(this.totalSlides);
+                    break;
             }
-        }, 300);
-    }
-}
+        });
 
-// Update navigation button states and indicators
-function updateNavigationState() {
-    // Update navigation buttons
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    
-    if (prevBtn) {
-        prevBtn.disabled = currentSlide === 1;
-    }
-    
-    if (nextBtn) {
-        nextBtn.disabled = currentSlide === totalSlides;
-    }
-    
-    // Update slide indicators
-    const indicators = document.querySelectorAll('.indicator');
-    indicators.forEach((indicator, index) => {
-        const slideNumber = index + 1;
-        if (slideNumber === currentSlide) {
-            indicator.classList.add('active');
-            indicator.setAttribute('aria-current', 'true');
-        } else {
-            indicator.classList.remove('active');
-            indicator.removeAttribute('aria-current');
-        }
-    });
-}
+        // Touch/swipe support for mobile
+        let startX = null;
+        let startY = null;
 
-// Touch/swipe support for mobile devices
-let touchStartX = 0;
-let touchEndX = 0;
-let touchStartY = 0;
-let touchEndY = 0;
+        this.slidesWrapper.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
 
-document.addEventListener('touchstart', function(event) {
-    touchStartX = event.changedTouches[0].screenX;
-    touchStartY = event.changedTouches[0].screenY;
-});
+        this.slidesWrapper.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
 
-document.addEventListener('touchend', function(event) {
-    touchEndX = event.changedTouches[0].screenX;
-    touchEndY = event.changedTouches[0].screenY;
-    handleSwipe();
-});
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            
+            const diffX = startX - endX;
+            const diffY = startY - endY;
 
-function handleSwipe() {
-    const swipeThreshold = 50; // minimum distance for a swipe
-    const swipeDistanceX = touchEndX - touchStartX;
-    const swipeDistanceY = touchEndY - touchStartY;
-    
-    // Only handle horizontal swipes if they're more significant than vertical ones
-    if (Math.abs(swipeDistanceX) > Math.abs(swipeDistanceY) && Math.abs(swipeDistanceX) > swipeThreshold) {
-        // Check if we're in slide 4 and scrolling vertically
-        if (currentSlide === 4) {
-            const scrollableContent = document.querySelector('.scrollable-content');
-            if (scrollableContent) {
-                const isScrollable = scrollableContent.scrollHeight > scrollableContent.clientHeight;
-                const isAtTop = scrollableContent.scrollTop === 0;
-                const isAtBottom = scrollableContent.scrollTop >= (scrollableContent.scrollHeight - scrollableContent.clientHeight - 1);
-                
-                // Only allow slide navigation if not scrolling or at scroll boundaries
-                if (!isScrollable || (swipeDistanceX > 0 && isAtTop) || (swipeDistanceX < 0 && isAtBottom)) {
-                    if (swipeDistanceX > 0) {
-                        previousSlide();
+            // Only handle horizontal swipes
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > 50) { // Minimum swipe distance
+                    if (diffX > 0) {
+                        // Swipe left - next slide
+                        this.nextSlide();
                     } else {
-                        nextSlide();
+                        // Swipe right - previous slide
+                        this.previousSlide();
                     }
                 }
             }
-        } else {
-            if (swipeDistanceX > 0) {
-                previousSlide();
-            } else {
-                nextSlide();
+
+            startX = null;
+            startY = null;
+        });
+    }
+
+    nextSlide() {
+        if (this.currentSlide < this.totalSlides) {
+            this.currentSlide++;
+            this.updateSlide();
+            this.updateNavButtons();
+            this.updateIndicators();
+        }
+    }
+
+    previousSlide() {
+        if (this.currentSlide > 1) {
+            this.currentSlide--;
+            this.updateSlide();
+            this.updateNavButtons();
+            this.updateIndicators();
+        }
+    }
+
+    goToSlide(slideNumber) {
+        if (slideNumber >= 1 && slideNumber <= this.totalSlides && slideNumber !== this.currentSlide) {
+            this.currentSlide = slideNumber;
+            this.updateSlide();
+            this.updateNavButtons();
+            this.updateIndicators();
+        }
+    }
+
+    updateSlide() {
+        const slides = document.querySelectorAll('.slide');
+        
+        slides.forEach((slide, index) => {
+            const slideNumber = index + 1;
+            slide.classList.remove('active', 'prev');
+            
+            if (slideNumber === this.currentSlide) {
+                slide.classList.add('active');
+            } else if (slideNumber < this.currentSlide) {
+                slide.classList.add('prev');
             }
+        });
+
+        // Scroll to top of slide content when switching
+        const activeSlide = document.querySelector('.slide.active .slide-content');
+        if (activeSlide) {
+            activeSlide.scrollTop = 0;
         }
+    }
+
+    updateNavButtons() {
+        this.prevBtn.disabled = this.currentSlide === 1;
+        this.nextBtn.disabled = this.currentSlide === this.totalSlides;
+    }
+
+    updateIndicators() {
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.classList.remove('active');
+            if (index + 1 === this.currentSlide) {
+                indicator.classList.add('active');
+            }
+        });
+    }
+
+    // Public method to get current slide info
+    getCurrentSlideInfo() {
+        return {
+            current: this.currentSlide,
+            total: this.totalSlides,
+            isFirst: this.currentSlide === 1,
+            isLast: this.currentSlide === this.totalSlides
+        };
     }
 }
 
-// URL hash support for direct linking to slides
-function updateURL() {
-    history.replaceState(null, null, `#slide-${currentSlide}`);
-}
-
-function initializeFromURL() {
-    const hash = window.location.hash;
-    const match = hash.match(/#slide-(\d+)/);
-    
-    if (match) {
-        const slideNumber = parseInt(match[1]);
-        if (slideNumber >= 1 && slideNumber <= totalSlides) {
-            currentSlide = slideNumber;
-        }
+// Enhanced accessibility features
+class AccessibilityEnhancer {
+    constructor(presentation) {
+        this.presentation = presentation;
+        this.init();
     }
-}
 
-// Handle browser back/forward buttons
-window.addEventListener('popstate', function() {
-    initializeFromURL();
-    updateSlideVisibility();
-    updateNavigationState();
-});
+    init() {
+        this.addAriaLabels();
+        this.addLiveRegion();
+        this.enhanceKeyboardNavigation();
+    }
 
-// Accessibility improvements
-function setupAccessibility() {
-    // Add ARIA labels and roles to slides
-    const slides = document.querySelectorAll('.slide');
-    slides.forEach((slide, index) => {
-        slide.setAttribute('role', 'tabpanel');
-        slide.setAttribute('aria-label', `Slide ${index + 1} de ${totalSlides}`);
-        slide.setAttribute('aria-hidden', index + 1 !== currentSlide ? 'true' : 'false');
-    });
-    
-    // Add ARIA labels to navigation
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    
-    if (prevBtn) {
+    addAriaLabels() {
+        // Add aria labels to navigation buttons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
         prevBtn.setAttribute('aria-label', 'Slide anterior');
-    }
-    
-    if (nextBtn) {
         nextBtn.setAttribute('aria-label', 'Próximo slide');
-    }
-    
-    // Add ARIA labels to indicators
-    const indicators = document.querySelectorAll('.indicator');
-    indicators.forEach((indicator, index) => {
-        indicator.setAttribute('aria-label', `Ir para slide ${index + 1}`);
-        indicator.setAttribute('role', 'button');
-        indicator.setAttribute('tabindex', '0');
-        
-        // Add keyboard support for indicators
-        indicator.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                goToSlide(index + 1);
-            }
-        });
-    });
-}
 
-// Screen reader announcements for slide changes
-function announceSlideChange() {
-    const activeSlide = document.querySelector('.slide.active');
-    if (activeSlide) {
-        const slideTitle = activeSlide.querySelector('h1');
+        // Add aria labels to slides
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach((slide, index) => {
+            slide.setAttribute('aria-label', `Slide ${index + 1} de ${slides.length}`);
+            slide.setAttribute('role', 'tabpanel');
+        });
+
+        // Add aria labels to indicators
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.setAttribute('aria-label', `Ir para slide ${index + 1}`);
+            indicator.setAttribute('role', 'tab');
+            indicator.setAttribute('tabindex', '0');
+        });
+    }
+
+    addLiveRegion() {
+        // Create a live region for screen readers
+        const liveRegion = document.createElement('div');
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.classList.add('sr-only');
+        liveRegion.id = 'slide-announcer';
+        document.body.appendChild(liveRegion);
+
+        // Update live region when slide changes
+        const originalUpdateSlide = this.presentation.updateSlide.bind(this.presentation);
+        this.presentation.updateSlide = () => {
+            originalUpdateSlide();
+            this.announceSlideChange();
+        };
+    }
+
+    announceSlideChange() {
+        const liveRegion = document.getElementById('slide-announcer');
+        const slideInfo = this.presentation.getCurrentSlideInfo();
+        const activeSlide = document.querySelector('.slide.active');
+        const slideTitle = activeSlide.querySelector('h1, h2');
+        
+        let announcement = `Slide ${slideInfo.current} de ${slideInfo.total}`;
         if (slideTitle) {
-            // Update ARIA hidden states
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach((slide, index) => {
-                slide.setAttribute('aria-hidden', index + 1 !== currentSlide ? 'true' : 'false');
-            });
-            
-            // Create temporary announcement element
-            const announcement = document.createElement('div');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.setAttribute('aria-atomic', 'true');
-            announcement.className = 'sr-only';
-            announcement.textContent = `Slide ${currentSlide} de ${totalSlides}: ${slideTitle.textContent}`;
-            
-            document.body.appendChild(announcement);
-            
-            // Remove after announcement
-            setTimeout(() => {
-                if (document.body.contains(announcement)) {
-                    document.body.removeChild(announcement);
+            announcement += `: ${slideTitle.textContent}`;
+        }
+        
+        liveRegion.textContent = announcement;
+    }
+
+    enhanceKeyboardNavigation() {
+        // Add keyboard support for indicators
+        const indicators = document.querySelectorAll('.indicator');
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.presentation.goToSlide(index + 1);
                 }
-            }, 1000);
-        }
-    }
-}
-
-// Fullscreen functionality
-function enterFullscreen() {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
-}
-
-function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    }
-}
-
-// Handle fullscreen changes
-document.addEventListener('fullscreenchange', function() {
-    const isFullscreen = document.fullscreenElement !== null;
-    document.body.classList.toggle('fullscreen-mode', isFullscreen);
-});
-
-// Auto-advance functionality (disabled by default)
-let autoAdvanceTimer = null;
-const autoAdvanceDelay = 15000; // 15 seconds
-
-function startAutoAdvance() {
-    stopAutoAdvance();
-    autoAdvanceTimer = setInterval(() => {
-        if (currentSlide < totalSlides) {
-            nextSlide();
-        } else {
-            stopAutoAdvance();
-        }
-    }, autoAdvanceDelay);
-}
-
-function stopAutoAdvance() {
-    if (autoAdvanceTimer) {
-        clearInterval(autoAdvanceTimer);
-        autoAdvanceTimer = null;
-    }
-}
-
-// Stop auto-advance on user interaction
-document.addEventListener('click', stopAutoAdvance);
-document.addEventListener('keydown', stopAutoAdvance);
-document.addEventListener('touchstart', stopAutoAdvance);
-
-// Progress tracking
-function getProgress() {
-    return {
-        currentSlide: currentSlide,
-        totalSlides: totalSlides,
-        percentage: Math.round((currentSlide / totalSlides) * 100)
-    };
-}
-
-// Slide 4 specific enhancements
-document.addEventListener('DOMContentLoaded', function() {
-    const scrollableContent = document.querySelector('.scrollable-content');
-    
-    if (scrollableContent) {
-        // Add smooth scrolling behavior
-        scrollableContent.style.scrollBehavior = 'smooth';
-        
-        // Add scroll progress indicator for slide 4
-        const scrollProgress = document.createElement('div');
-        scrollProgress.className = 'scroll-progress';
-        scrollProgress.style.cssText = `
-            position: absolute;
-            bottom: 140px;
-            right: 20px;
-            width: 4px;
-            height: 100px;
-            background: var(--color-secondary);
-            border-radius: 2px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        `;
-        
-        const scrollThumb = document.createElement('div');
-        scrollThumb.className = 'scroll-thumb';
-        scrollThumb.style.cssText = `
-            width: 100%;
-            background: var(--color-primary);
-            border-radius: 2px;
-            transition: height 0.1s ease;
-        `;
-        
-        scrollProgress.appendChild(scrollThumb);
-        document.querySelector('.slide[data-slide="4"]').appendChild(scrollProgress);
-        
-        // Update scroll progress
-        scrollableContent.addEventListener('scroll', function() {
-            if (currentSlide === 4) {
-                const scrollTop = this.scrollTop;
-                const scrollHeight = this.scrollHeight - this.clientHeight;
-                const progress = scrollTop / scrollHeight;
-                
-                scrollThumb.style.height = Math.max(10, progress * 100) + '%';
-                scrollProgress.style.opacity = scrollHeight > 0 ? '1' : '0';
-            }
+            });
         });
     }
-});
+}
 
-// Performance optimization: preload content
-function preloadSlideContent() {
-    // Preload images and content for better performance
-    const slides = document.querySelectorAll('.slide');
-    slides.forEach(slide => {
-        const images = slide.querySelectorAll('img[data-src]');
-        images.forEach(img => {
-            if (img.dataset.src) {
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-            }
+// Smooth scroll enhancement for slide content
+class ScrollEnhancer {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Add smooth scrolling to slide content areas
+        const slideContents = document.querySelectorAll('.slide-content');
+        slideContents.forEach(content => {
+            content.style.scrollBehavior = 'smooth';
         });
-    });
+
+        // Add custom scrollbar styling for webkit browsers
+        this.addCustomScrollbar();
+    }
+
+    addCustomScrollbar() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .slide-content::-webkit-scrollbar {
+                width: 8px;
+            }
+            
+            .slide-content::-webkit-scrollbar-track {
+                background: var(--color-secondary);
+                border-radius: var(--radius-sm);
+            }
+            
+            .slide-content::-webkit-scrollbar-thumb {
+                background: var(--color-primary);
+                border-radius: var(--radius-sm);
+            }
+            
+            .slide-content::-webkit-scrollbar-thumb:hover {
+                background: var(--color-primary-hover);
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
-// Initialize preloading
-document.addEventListener('DOMContentLoaded', preloadSlideContent);
+// Performance optimization
+class PerformanceOptimizer {
+    constructor(presentation) {
+        this.presentation = presentation;
+        this.init();
+    }
 
-// Presentation mode detection
-function isPresentationMode() {
-    return document.fullscreenElement !== null;
+    init() {
+        this.preloadSlides();
+        this.optimizeTransitions();
+    }
+
+    preloadSlides() {
+        // Force browser to render all slides for smoother transitions
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach(slide => {
+            slide.style.willChange = 'transform, opacity';
+        });
+    }
+
+    optimizeTransitions() {
+        // Use requestAnimationFrame for smoother animations
+        const originalUpdateSlide = this.presentation.updateSlide.bind(this.presentation);
+        this.presentation.updateSlide = () => {
+            requestAnimationFrame(originalUpdateSlide);
+        };
+    }
 }
 
-// Export API for external use
-window.presentationAPI = {
-    nextSlide,
-    previousSlide,
-    goToSlide,
-    getCurrentSlide: () => currentSlide,
-    getTotalSlides: () => totalSlides,
-    getProgress,
-    enterFullscreen,
-    exitFullscreen,
-    startAutoAdvance,
-    stopAutoAdvance,
-    isPresentationMode
-};
-
-// Debug mode (can be enabled via console)
-window.debugPresentation = function() {
-    console.log('Presentation Debug Info:', {
-        currentSlide,
-        totalSlides,
-        progress: getProgress(),
-        isFullscreen: isPresentationMode(),
-        autoAdvanceActive: autoAdvanceTimer !== null
-    });
-};
-
-// Initialize presentation on load
-document.addEventListener('DOMContentLoaded', function() {
-    // Add a subtle fade-in effect on load
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Create main presentation controller
+    const presentation = new PresentationController();
     
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
+    // Enhance with accessibility features
+    new AccessibilityEnhancer(presentation);
     
-    // Focus management for better keyboard navigation
+    // Add scroll enhancements
+    new ScrollEnhancer();
+    
+    // Optimize performance
+    new PerformanceOptimizer(presentation);
+
+    // Add loading state management
+    document.body.classList.add('presentation-loaded');
+    
+    // Focus management for better UX
     const firstSlide = document.querySelector('.slide.active');
     if (firstSlide) {
         firstSlide.focus();
     }
-});
 
-// Error handling
-window.addEventListener('error', function(event) {
-    console.error('Presentation error:', event.error);
-    // Graceful degradation - ensure navigation still works
-    if (typeof nextSlide !== 'function') {
-        window.location.reload();
+    // Add error handling for missing elements
+    try {
+        const requiredElements = ['slidesWrapper', 'prevBtn', 'nextBtn', 'slideIndicators'];
+        requiredElements.forEach(id => {
+            if (!document.getElementById(id)) {
+                throw new Error(`Required element '${id}' not found`);
+            }
+        });
+    } catch (error) {
+        console.error('Presentation initialization error:', error);
     }
 });
-
-// Performance monitoring (development only)
-if (window.performance && window.performance.mark) {
-    document.addEventListener('DOMContentLoaded', function() {
-        performance.mark('presentation-loaded');
-    });
-    
-    // Measure slide transition performance
-    const originalUpdateSlideVisibility = updateSlideVisibility;
-    updateSlideVisibility = function() {
-        performance.mark('slide-transition-start');
-        originalUpdateSlideVisibility();
-        setTimeout(() => {
-            performance.mark('slide-transition-end');
-            performance.measure('slide-transition', 'slide-transition-start', 'slide-transition-end');
-        }, 300);
-    };
-}
