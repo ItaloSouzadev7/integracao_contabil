@@ -3,265 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise Comparativa: Ottimizza vs Visão Lógica</title>
+    <title>Avaliação de Soluções para Automação Contábil</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="presentation-container">
-        <!-- Slide Navigation -->
-        <div class="slide-nav">
-            <button class="nav-btn nav-prev" id="prevBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Header with navigation -->
+        <header class="presentation-header">
+            <button class="nav-btn" id="prevBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15,18 9,12 15,6"></polyline>
                 </svg>
+                Anterior
             </button>
-            <div class="slide-indicators" id="slideIndicators"></div>
-            <button class="nav-btn nav-next" id="nextBtn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">8</span>
+            </div>
+            <button class="nav-btn" id="nextBtn">
+                Próximo
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9,18 15,12 9,6"></polyline>
                 </svg>
             </button>
-        </div>
+        </header>
 
-        <!-- Slides Container -->
-        <div class="slides-wrapper" id="slidesWrapper">
-            <!-- Slide 1: Título -->
+        <!-- Slides container -->
+        <main class="slides-container">
+            <!-- Slide 1 - Title -->
             <div class="slide active" data-slide="1">
                 <div class="slide-content title-slide">
-                    <div class="title-content">
-                        <h1>Análise Comparativa: Soluções de Automação Contábil</h1>
-                        <h2>Ottimizza.Meu Integrador vs Visão Lógica Gerador de Lançamentos</h2>
-                        <div class="context-box">
-                            <p><strong>Contexto:</strong> Visão Lógica já implementado na empresa, avaliando migração para Ottimizza</p>
-                        </div>
-                    </div>
+                    <h1>Avaliação de Soluções para Automação Contábil</h1>
+                    <h2>Visão Lógica, Ottimizza e Nibo Conciliador Open Finance</h2>
+                    <p class="context">Contexto: Necessidade de modernização, ganho de produtividade e redução de trabalho manual em escritórios contábeis</p>
                 </div>
             </div>
 
-            <!-- Slide 2: Ottimizza -->
+            <!-- Slide 2 - Visão Lógica -->
             <div class="slide" data-slide="2">
                 <div class="slide-content">
-                    <div class="slide-header ottimizza-theme">
-                        <h2>Ottimizza.Meu Integrador + Busca Extrato</h2>
-                    </div>
-                    <div class="features-grid">
-                        <div class="feature-item">
-                            <div class="feature-icon">🤖</div>
-                            <p>Utiliza inteligência artificial para facilitar os lançamentos contábeis</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🏦</div>
-                            <p>Busca automática de extratos bancários via Open Finance</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔗</div>
-                            <p>Compatível com qualquer ERP do mercado</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">⚡</div>
-                            <p>Pode reduzir significativamente a digitação manual dos extratos</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📊</div>
-                            <p>Consolida vários extratos automaticamente</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">☁️</div>
-                            <p>Plataforma totalmente web, sem necessidade de instalação local</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔌</div>
-                            <p>Possui APIs para integração com outros sistemas</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📋</div>
-                            <p>Já suporta mais de 250 layouts bancários e cartões</p>
-                        </div>
-                    </div>
+                    <h1>Visão Lógica - Perfil e Funcionalidades</h1>
+                    <ul class="bullet-list">
+                        <li>Sistema implantado e robusto para contabilidade e áreas correlatas</li>
+                        <li>Funcionalidades importantes: Folha de Pagamento, Módulos Fiscais, Gerador de Lançamentos Contábeis</li>
+                        <li>Automação via regras, porém sem integração com Open Finance ou inteligência artificial</li>
+                        <li>Operação local, com coleta manual de demonstrativos financeiros e extratos</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Slide 3: Visão Lógica -->
+            <!-- Slide 3 - Ottimizza -->
             <div class="slide" data-slide="3">
                 <div class="slide-content">
-                    <div class="slide-header visaologica-theme">
-                        <h2>Visão Lógica Gerador de Lançamentos</h2>
-                        <p class="subtitle">(Já implementado)</p>
-                    </div>
-                    <div class="modules-container">
-                        <h3>Módulos disponíveis:</h3>
-                        <div class="modules-grid">
-                            <div class="module-card">
-                                <div class="module-icon">📊</div>
-                                <h4>Contábil</h4>
-                            </div>
-                            <div class="module-card">
-                                <div class="module-icon">👥</div>
-                                <h4>Folha de Pagamento</h4>
-                            </div>
-                            <div class="module-card">
-                                <div class="module-icon">📋</div>
-                                <h4>Fiscal</h4>
-                            </div>
-                        </div>
-                        <div class="implementation-info">
-                            <div class="info-box">
-                                <h4>Tipo de implantação:</h4>
-                                <p>Software instalado localmente</p>
-                            </div>
-                        </div>
-                    </div>
+                    <h1>Ottimizza - Automação e Integração Completa</h1>
+                    <ul class="bullet-list">
+                        <li>Plataforma focada exclusivamente em escritórios contábeis, com +2.000 clientes e 160 mil usuários</li>
+                        <li>Busca automática de extratos bancários via Open Finance e formatos variados (+250 leiautes)</li>
+                        <li>Ferramentas com inteligência artificial para automação de lançamentos e eliminação de tarefas manuais</li>
+                        <li>Modelo comercial: investimento inicial (R$ 960) + mensalidade fixa (R$ 627,90 até 100 CNPJs)</li>
+                        <li>Limitação: não automatiza captura de demonstrativos de aplicações e rendimentos financeiros</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Slide 4: Análise detalhada -->
+            <!-- Slide 4 - Nibo -->
             <div class="slide" data-slide="4">
                 <div class="slide-content">
-                    <div class="slide-header">
-                        <h2>Análise detalhada do Ottimizza Busca Extrato</h2>
-                    </div>
-                    <div class="analysis-content">
-                        <div class="analysis-section warning">
-                            <h3>⚠️ Limitação Importante</h3>
-                            <p>Embora automatize a busca dos extratos, o Ottimizza Busca Extrato não captura os demonstrativos de rendimentos necessários para empresas de Lucro Presumido e Real. Esses ainda precisam ser obtidos manualmente junto ao cliente.</p>
-                        </div>
-
-                        <div class="analysis-section">
-                            <h3>🔍 Funcionamento da busca</h3>
-                            <ul class="analysis-list">
-                                <li class="positive">✅ Extratos são obtidos automaticamente via Open Finance</li>
-                                <li class="positive">✅ Busca programada para ocorrer mensalmente</li>
-                                <li class="positive">✅ Compatível com mais de 250 layouts bancários</li>
-                                <li class="negative">❌ Não realiza busca dos demonstrativos de rendimentos</li>
-                            </ul>
-                        </div>
-
-                        <div class="analysis-section">
-                            <h3>📋 Impacto prático</h3>
-                            <ul class="analysis-list">
-                                <li>O cliente precisa continuar acessando sua conta bancária e enviar os demonstrativos manualmente</li>
-                                <li>Isso pode comprometer a eficiência esperada da automação financeira</li>
-                            </ul>
-                        </div>
-
-                        <div class="analysis-section">
-                            <h3>💡 Avaliação custo-benefício</h3>
-                            <ul class="analysis-list">
-                                <li>Com o Busca Extrato: cliente envia demonstrativo manualmente e há custo da conexão Open Finance</li>
-                                <li>Sem o Busca Extrato: cliente envia extrato e demonstrativo manualmente, sem custo adicional</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <h1>Nibo Conciliador Open Finance - Eficiência na Conciliação Bancária</h1>
+                    <ul class="bullet-list">
+                        <li>Instrumento de automação da conciliação bancária para escritórios contábeis</li>
+                        <li>Integração com mais de 20 bancos via Open Finance, eliminando pedido manual de extratos</li>
+                        <li>Exportação para diversos sistemas contábeis facilitada</li>
+                        <li>Modelo comercial: implantação promocional (R$ 350) + mensalidade variável (R$ 6,00 por cliente)</li>
+                        <li>Também não captura automaticamente demonstrativos de aplicações e rendimentos</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Slide 5: Por que não migrar -->
+            <!-- Slide 5 - Limitações -->
             <div class="slide" data-slide="5">
                 <div class="slide-content">
-                    <div class="slide-header">
-                        <h2>Por que a migração para Ottimizza não é recomendada no momento</h2>
-                    </div>
-                    <div class="reasons-container">
-                        <div class="reason-item">
-                            <div class="reason-number">1</div>
-                            <p>Limitação do módulo Busca Extrato reduz a vantagem da automação completa</p>
-                        </div>
-                        <div class="reason-item">
-                            <div class="reason-number">2</div>
-                            <p>Ottimizza é focada principalmente em rotinas contábeis</p>
-                        </div>
-                        <div class="reason-item">
-                            <div class="reason-number">3</div>
-                            <p>Visão Lógica já oferece funcionalidades adicionais importantes, como Folha de Pagamento e Fiscal</p>
-                        </div>
-                        <div class="reason-item">
-                            <div class="reason-number">4</div>
-                            <p>Troca pode gerar custos e retrabalho devido à necessidade de coleta manual de documentos</p>
-                        </div>
-                    </div>
+                    <h1>Limitação Importante - Demonstrativos de Aplicações e Rendimentos</h1>
+                    <ul class="bullet-list">
+                        <li>Nenhuma das soluções integra automaticamente esses documentos via Open Finance</li>
+                        <li>Ecossistema atual no Brasil não contempla essa captura</li>
+                        <li>Necessidade de coleta manual ou procedimentos alternativos para esses comprovantes financeiros</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Slide 6: Comparativo -->
+            <!-- Slide 6 - Comparativo -->
             <div class="slide" data-slide="6">
                 <div class="slide-content">
-                    <div class="slide-header">
-                        <h2>Comparativo resumido</h2>
-                    </div>
-                    <div class="comparison-table">
-                        <div class="table-header">
-                            <div class="table-cell"></div>
-                            <div class="table-cell ottimizza-header">Ottimizza</div>
-                            <div class="table-cell visaologica-header">Visão Lógica</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">Automação</div>
-                            <div class="table-cell">Inteligência artificial e aprendizado</div>
-                            <div class="table-cell">Parametrização manual</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">Abrangência</div>
-                            <div class="table-cell">Contábil + extratos bancários</div>
-                            <div class="table-cell">Contábil, Folha de Pagamento e Fiscal</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">Implantação</div>
-                            <div class="table-cell">Plataforma web / nuvem</div>
-                            <div class="table-cell">Software instalado localmente</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">Extratos Bancários</div>
-                            <div class="table-cell">Busca via Open Finance (sem demonstrativos)</div>
-                            <div class="table-cell">Importação manual</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">ERPs Suportados</div>
-                            <div class="table-cell">Compatível com qualquer ERP</div>
-                            <div class="table-cell">Principais ERPs com customização</div>
-                        </div>
-                        <div class="table-row">
-                            <div class="table-cell row-label">Status Atual</div>
-                            <div class="table-cell">Em avaliação para migração</div>
-                            <div class="table-cell recommended">Implementado e em uso</div>
-                        </div>
+                    <h1>Comparativo Rápido</h1>
+                    <div class="table-container">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Critério</th>
+                                    <th>Visão Lógica</th>
+                                    <th>Ottimizza</th>
+                                    <th>Nibo Conciliador</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Integração Open Finance</td>
+                                    <td>Não</td>
+                                    <td>Sim</td>
+                                    <td>Sim</td>
+                                </tr>
+                                <tr>
+                                    <td>Inteligência Artificial</td>
+                                    <td>Não</td>
+                                    <td>Sim</td>
+                                    <td>Parcial (foco conciliação)</td>
+                                </tr>
+                                <tr>
+                                    <td>Automação extratos</td>
+                                    <td>Manual</td>
+                                    <td>Completa</td>
+                                    <td>Completa</td>
+                                </tr>
+                                <tr>
+                                    <td>Variedade de formatos</td>
+                                    <td>Limitada</td>
+                                    <td>+250 formatos</td>
+                                    <td>+20 bancos</td>
+                                </tr>
+                                <tr>
+                                    <td>Módulos fiscais e folha</td>
+                                    <td>Sim</td>
+                                    <td>Foco contábil e automação</td>
+                                    <td>Não especificado</td>
+                                </tr>
+                                <tr>
+                                    <td>Captura demonstrativos</td>
+                                    <td>Manual</td>
+                                    <td>Manual</td>
+                                    <td>Manual</td>
+                                </tr>
+                                <tr>
+                                    <td>Modelo de cobrança</td>
+                                    <td>Implantado</td>
+                                    <td>Ativação + mensalidade fixa</td>
+                                    <td>Implantação + valor por cliente</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Slide 7: Recomendação final -->
+            <!-- Slide 7 - Recomendações -->
             <div class="slide" data-slide="7">
                 <div class="slide-content">
-                    <div class="slide-header">
-                        <h2>Recomendação final</h2>
-                    </div>
-                    <div class="recommendation-content">
-                        <div class="main-recommendation">
-                            <div class="recommendation-icon">✅</div>
-                            <h3>Manter a utilização do Visão Lógica</h3>
-                        </div>
-                        
-                        <div class="recommendation-reasons">
-                            <h4>Principais motivos:</h4>
-                            <ul>
-                                <li>Solução já implementada, estável e adequada às necessidades atuais</li>
-                                <li>Limitação importante no Busca Extrato da Ottimizza que impacta a automação</li>
-                                <li>Maior abrangência funcional com os módulos adicionais</li>
-                                <li>Considerações de custo-benefício desfavorecem a troca no momento</li>
-                            </ul>
-                        </div>
-
-                        <div class="next-steps">
-                            <h4>Próximos passos recomendados:</h4>
-                            <ol>
-                                <li>Explorar ao máximo os recursos atuais do Visão Lógica</li>
-                                <li>Avaliar treinamentos para maior aproveitamento do sistema</li>
-                                <li>Reavaliar Ottimizza caso haja atualização solucionando a limitação de integração de demonstrativos</li>
-                            </ol>
-                        </div>
-                    </div>
+                    <h1>Considerações e Recomendações</h1>
+                    <ul class="bullet-list">
+                        <li>Visão Lógica atende bem áreas fiscais e folha, porém requer processos manuais para extratos/relatórios</li>
+                        <li>Ottimizza oferece ampla automação, ideal para escritórios que buscam eliminar tarefas manuais de lançamento</li>
+                        <li>Nibo é eficiente na conciliação combinando custo variável conforme carteira de clientes</li>
+                        <li>Todas as opções exigem coleta manual para documentos de aplicações e rendimentos</li>
+                        <li>Avaliar prioridades internas para custo, automação e funcionalidades para orientar decisão</li>
+                    </ul>
                 </div>
             </div>
-        </div>
+
+            <!-- Slide 8 - Próximos Passos -->
+            <div class="slide" data-slide="8">
+                <div class="slide-content">
+                    <h1>Próximos Passos</h1>
+                    <ul class="bullet-list">
+                        <li>Definir requisitos prioritários para automação e integração</li>
+                        <li>Planejar testes de conceito para Ottimizza e Nibo, considerando experiência e aderência</li>
+                        <li>Mapear processos para coleta manual complementar dos demonstrativos financeiros</li>
+                        <li>Estabelecer cronograma e orçamento para possível migração ou implantação incremental</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Slide indicators -->
+        <footer class="slide-indicators">
+            <button class="indicator active" data-slide="1"></button>
+            <button class="indicator" data-slide="2"></button>
+            <button class="indicator" data-slide="3"></button>
+            <button class="indicator" data-slide="4"></button>
+            <button class="indicator" data-slide="5"></button>
+            <button class="indicator" data-slide="6"></button>
+            <button class="indicator" data-slide="7"></button>
+            <button class="indicator" data-slide="8"></button>
+        </footer>
     </div>
 
     <script src="app.js"></script>
